@@ -79,4 +79,15 @@ public class SetmealController {
         return R.success("删除成功");
     }
 
+//    60.根据条件(前端传来的getCategoryId和status)查询套餐数据
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Setmeal setmeal){
+        LambdaQueryWrapper<Setmeal> lambdaQueryWrapper=new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(setmeal.getCategoryId()!=null,Setmeal::getCategoryId,setmeal.getCategoryId());
+        lambdaQueryWrapper.eq(setmeal.getStatus()!=null,Setmeal::getStatus,setmeal.getStatus());
+        lambdaQueryWrapper.orderByDesc(Setmeal::getUpdateTime);
+
+        List<Setmeal> list = setmealService.list(lambdaQueryWrapper);//查完之后放入到list集合
+        return R.success(list);
+    }
 }

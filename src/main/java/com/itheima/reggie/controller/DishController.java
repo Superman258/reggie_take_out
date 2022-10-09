@@ -7,6 +7,7 @@ import com.itheima.reggie.common.R;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Category;
 import com.itheima.reggie.entity.Dish;
+import com.itheima.reggie.entity.DishFlavor;
 import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.DishFlavorService;
 import com.itheima.reggie.service.DishService;
@@ -102,7 +103,7 @@ public class DishController {
 
 //    49.新增套餐时，根据条件（Id）查询菜品数据
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish){
+    public R<List<DishDto>> list(Dish dish){
 
 //        QueryWrapper<Dish>queryWrapper=new QueryWrapper<>();
 //        queryWrapper.eq(dish.getCategoryId()!=null,"category_id",dish.getCategoryId());
@@ -112,7 +113,33 @@ public class DishController {
         queryWrapper.eq(Dish::getStatus,1);
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(queryWrapper);
-        return R.success(list);
+
+        //59.改造菜品数据，用DishDto来增加口味信息
+        List<DishDto> dishDtoList= list.stream().map((item)->{
+            //遍历records的list对象，用map（）取出records对象。然后创建dto对象，完事后记得用collectt收集，再转list
+            DishDto dishDto=new DishDto();
+
+            BeanUtils.copyProperties(item,dishDto);//item赋值给dishDto，就可以拿到除菜品名称外的其他基本数据
+
+            Long categoryId=item.getCategoryId();//拿到每个菜品的分类id,可以去查寻数据库
+            Category category= categoryService.getById(categoryId);//用categoryId获取的id去Category表查询对应id的菜品名称
+
+            if (category!=null){
+                String categoryName=category.getName();//把上一步查询到的分类名称赋给categoryName
+                dishDto.setCategoryName(categoryName);
+            }
+
+            Long dishId = item.getId();//获取当前菜品id
+            LambdaQueryWrapper<DishFlavor> lambdaQueryWrapper=new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(DishFlavor::getDishId,dishId);
+            //SQL:select *from dish_flavor where dish_id=item.getId
+            List<DishFlavor> dishFlavorList = dishFlavorService.list(lambdaQueryWrapper);//封装成集合对象
+            // 用上面的集合对象给传进来的dishDto赋值
+            dishDto.setFlavors(dishFlavorList);
+
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(dishDtoList);
     }
 }
 

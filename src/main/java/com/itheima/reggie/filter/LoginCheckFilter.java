@@ -4,7 +4,6 @@ package com.itheima.reggie.filter;
 import com.alibaba.fastjson.JSON;
 import com.itheima.reggie.common.BaseContext;
 import com.itheima.reggie.common.R;
-import com.sun.deploy.net.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 

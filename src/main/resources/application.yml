@@ -24,4 +24,5 @@ mybatis-plus:
 
 #31.指定固定存放点
 reggie:
-  path: C:\Users\28581\Desktop\Java_Workplace\download_place\
+  path: D:\work_space\java_workspace\download_place
+

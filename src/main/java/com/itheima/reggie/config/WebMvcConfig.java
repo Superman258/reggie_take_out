@@ -2,6 +2,7 @@ package com.itheima.reggie.config;
 
 import com.itheima.reggie.common.JacksonObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import java.util.List;
 @Slf4j
 @Configuration
+@MapperScan("com.itheima.reggie.mapper")
 public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     /*重写，进行静态资源映射，用来把前端网页路径请求映射到这里的具体页面*/
